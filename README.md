@@ -1,10 +1,6 @@
 # Tutorial: Write and interact with your first Aztec.nr contract
 
-<aside>
-💡 This is primarily aimed towards developers coming from Ethereum and utilizes the sandbox. There is a limited assumed knowledge of zk, but there are pieces throughout to encourage zk devs. 
-
-If we are using this to run workshops, we will have to edit slightly depending on our audience.
-</aside>
+> 💡 This is primarily aimed towards developers coming from Ethereum and utilizes the sandbox. There is a limited assumed knowledge of zk, but there are pieces throughout to encourage zk devs. If we are using this to run workshops, we will have to edit slightly depending on our audience.
 
 In this tutorial, we will write, compile, deploy, and interact with an Aztec.nr smart contract. You do not need any experience with Aztec or Noir, but it will help to have some basic blockchain knowledge. You’ll learn how to:
 
