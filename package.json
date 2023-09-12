@@ -1,0 +1,21 @@
+{
+  "name": "example-private-token",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "yarn clean && tsc -b",
+    "build:dev": "tsc -b --watch",
+    "clean": "rm -rf ./dest tsconfig.tsbuildinfo",
+    "start": "yarn build && export DEBUG='private-token' && node ./dest/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@aztec/aztec.js": "^0.6.7",
+    "@aztec/noir-contracts": "^0.6.7"
+  }
+}
