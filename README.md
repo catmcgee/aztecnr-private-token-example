@@ -10,7 +10,7 @@ In this tutorial, we will write, compile, deploy, and interact with an Aztec.nr 
 4. Deploy your contract using Aztec.js
 5. Interact with your contract using Aztec.js
 
-Before following this tutorial, please make sure you have [installed the sandbox.](https://sandbox.aztec.network) 
+Before following this tutorial, please make sure you have [installed the sandbox.](https://sandbox.aztec.network)
 
 # Contract
 
@@ -18,7 +18,7 @@ This tutorial is divided into two parts - the contract and the node app. If you�
 
 ## Starting a project
 
-Run the [sandbox](https://aztec-docs-dev.netlify.app/dev_docs/getting_started/sandbox) using either Docker or npm. 
+Run the [sandbox](https://aztec-docs-dev.netlify.app/dev_docs/getting_started/sandbox) using either Docker or npm.
 
 Docker
 
@@ -34,7 +34,7 @@ npx @aztec/aztec-sandbox
 
 ### Requirements
 
-You will need to install nargo, the Noir build too. if you are familiar with Rust, this is similar to cargo. 
+You will need to install nargo, the Noir build too. if you are familiar with Rust, this is similar to cargo.
 
 ```bash
 curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
@@ -45,7 +45,7 @@ This command ensures that you are on the `aztec` version of noirup, which is wha
 
 ### Create a project
 
-Create a new directory called `aztec-private-token` 
+Create a new directory called `aztec-private-token`
 
 ```bash
 mkdir aztec-private-token
@@ -88,18 +88,18 @@ authors = [""]
 compiler_version = "0.11.1"
 
 [dependencies] 
-aztec = { git="https://github.com/AztecProtocol/aztec-packages", tag="master", directory="yarn-project/noir-libs/aztec-noir" }
-value_note = { git="https://github.com/AztecProtocol/aztec-packages", tag="master", directory="yarn-project/noir-libs/value-note"}
-easy_private_state = { git="https://github.com/AztecProtocol/aztec-packages", tag="master", directory="yarn-project/noir-libs/easy-private-state"}
+aztec = { git="https://github.com/AztecProtocol/aztec-packages/", tag="master", directory="yarn-project/aztec-nr/aztec" }
+value_note = { git="https://github.com/AztecProtocol/aztec-packages/", tag="master", directory="yarn-project/aztec-nr/value-note"}
+easy_private_state = { git="https://github.com/AztecProtocol/aztec-packages/", tag="master", directory="yarn-project/aztec-nr/easy-private-state"}
 ```
 
 This the type as `contract` and adds the dependencies we need to create a private token smart contract.
 
 # Writing a smart contract
 
- In this section, we will learn how to write a private transferrable token smart contract. 
+ In this section, we will learn how to write a private transferrable token smart contract.
 
-In this contract, the identity of the sender and recipient, the amount being transferred, and the initial supply of tokens are kept private and only disclosed to the parties involved. 
+In this contract, the identity of the sender and recipient, the amount being transferred, and the initial supply of tokens are kept private and only disclosed to the parties involved.
 
 ### Step 1: Define the functions needed
 
@@ -124,7 +124,7 @@ contract PrivateToken {
 
 This code defines a contract called `PrivateToken` with four functions that we will implement later - a `constructor` which is called when the contract is deployed, `mint`, `transfer`, and `getBalance`.
 
- We have annotated the functions with `#[aztec(private)]` which are ABI macros so the compiler understands it will handle private inputs. 
+ We have annotated the functions with `#[aztec(private)]` which are ABI macros so the compiler understands it will handle private inputs.
 
 The `getBalance` function doesn’t need this as it will only be reading from the chain, not updating state, similar to a `view` function in Solidity. This is what `unconstrained` means.
 
@@ -159,9 +159,9 @@ In this step, we will initiate a `Storage` struct to store balances in a private
 **What are these new dependencies?**
 
 `context::{PrivateContext, Context}`
-Context gives us access to the environment information such as `msg.sender`. We are also importing `PrivateContext` to access necessary information for our private functions. We’ll be using it in the next step. 
+Context gives us access to the environment information such as `msg.sender`. We are also importing `PrivateContext` to access necessary information for our private functions. We’ll be using it in the next step.
 
-`state_vars::{map::Map, set::Set}` 
+`state_vars::{map::Map, set::Set}`
 
 Map is a state variable that functions like a dictionary, relating Fields to other state variables. A Set is specifically used for managing multiple notes.
 
@@ -257,7 +257,7 @@ Here, we create a private context, initialize the storage, and set the sender as
 
 ### Step 5: Preventing double spending
 
-Because our token transfers are private, the network can't directly verify if a note was spent or not, which could lead to double-spending. To solve this, we use a nullifier - a unique identifier generated from each spent note and its owner. 
+Because our token transfers are private, the network can't directly verify if a note was spent or not, which could lead to double-spending. To solve this, we use a nullifier - a unique identifier generated from each spent note and its owner.
 
 Add a new function into your contract as shown below:
 
@@ -293,7 +293,7 @@ This tutorial assumes you have followed along to create a private token smart co
 
 ### Setting up a project
 
-You will need to run the sandbox if it is not running already. You can use either Docker or npm. 
+You will need to run the sandbox if it is not running already. You can use either Docker or npm.
 
 Docker
 
@@ -331,7 +331,7 @@ Go the root directory we created in [this section](https://www.notion.so/Tutoria
 yarn init
 ```
 
-Leave the following questions as default. 
+Leave the following questions as default.
 
 Add `typescript`  and Aztec libraries to your project:
 
@@ -420,13 +420,13 @@ Create a new async function and set up the RPC client.
 
 ```tsx
 const deployContract = async () => {
-		const rpc = await createAztecRpcClient(SANDBOX_URL);
+    const rpc = await createAztecRpcClient(SANDBOX_URL);
     const accounts = await rpc.getAccounts();
-		console.log(`Accounts: ${await console.log(accounts);}
+    console.log(`Accounts: ${await console.log(accounts)})`);
 };
 ```
 
-This creates an RPC client for us to communicate with the sandbox and gets all existing accounts. 
+This creates an RPC client for us to communicate with the sandbox and gets all existing accounts.
 
 At the end of the file put this so this function is called when we run:
 
@@ -481,10 +481,10 @@ Next we will create and send a deployment transaction object:
 
 ```tsx
 const tx = PrivateTokenContract.deploy(
-										rpc, 
-										100n, 
-										deployerWallet.address).send(
-													{ contractAddressSalt: salt });
+          rpc, 
+          100n, 
+          deployerWallet.address).send(
+             { contractAddressSalt: salt });
 console.log(`Tx sent with hash ${await tx.getTxHash()}`);
 ```
 
@@ -504,7 +504,7 @@ Tx sent with hash 1a8fc8a8807fd9504869426f9470ca8fc7bc89aa9db53d201ea9765866be46
 
 The deploy transaction has been sent - now let’s make sure it is successfully mined.
 
-`tx` has a function `getReceipt` which contains status, block information, tx hash, and contract address. Put this under your transaction: 
+`tx` has a function `getReceipt` which contains status, block information, tx hash, and contract address. Put this under your transaction:
 
 ```tsx
 const receipt = await tx.getReceipt();
@@ -519,7 +519,7 @@ Status: pending
 Contract address: undefined
 ```
 
-so we have to wait until after the transaction is mined. 
+so we have to wait until after the transaction is mined.
 
 Add this line on top of your receipt code:
 
@@ -527,7 +527,7 @@ Add this line on top of your receipt code:
 await tx.isMined({ interval: 0.1 });
 ```
 
-The `interval` lets us check if the transaction is mined every 0.1 seconds. 
+The `interval` lets us check if the transaction is mined every 0.1 seconds.
 
 Your entire file should look like this:
 
