@@ -1,21 +1,23 @@
-import {
-    AztecRPC,
-    createAztecRpcClient,
-    createDebugLogger,
-    getSchnorrAccount,
-    makeFetch,
-    waitForSandbox,
-  } from '@aztec/aztec.js';
-  ////////////// CREATE THE CLIENT INTERFACE AND CONTACT THE SANDBOX //////////////
-  const logger = createDebugLogger('private-token');
-  const sandboxUrl = 'http://localhost:8080';
+import { Fr } from '@aztec/foundation/fields';
+import { createAztecRpcClient } from '@aztec/aztec.js';
+import { PrivateTokenContract } from './PrivateToken.js';
 
-  // We create AztecRPC client connected to the sandbox URL and we use fetch with
-  // 3 automatic retries and a 1s, 2s and 3s intervals between failures.
-  const aztecRpc = createAztecRpcClient(sandboxUrl, makeFetch([1, 2, 3], false));
-  // Wait for sandbox to be ready
-  await waitForSandbox(aztecRpc);
+const SANDBOX_URL = process.env['SANDBOX_URL'] || 'http://localhost:8080'; 
 
-  const nodeInfo = await aztecRpc.getNodeInfo();
+const deployContract = async () => {
+    const rpc = await createAztecRpcClient(SANDBOX_URL);
+    const accounts = await rpc.getAccounts();
+    await console.log(accounts);
 
-  console.log('Aztec Sandbox Info ', nodeInfo);
+    const deployerWallet = accounts[0];
+    const salt = Fr.random();
+
+    const tx = PrivateTokenContract.deploy(rpc, 100n, deployerWallet.address).send({ contractAddressSalt: salt });
+    console.log(`Tx sent with hash ${await tx.getTxHash()}`);
+
+    await tx.isMined({ interval: 0.1 });
+    const receiptAfterMined = await tx.getReceipt();
+    console.log(`Status: ${receiptAfterMined.status}`);
+    console.log(`Contract address: ${receiptAfterMined.contractAddress}`);
+};
+deployContract()

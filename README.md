@@ -1,6 +1,6 @@
 # Tutorial: Write and interact with your first Aztec.nr contract
 
-> 💡 This is primarily aimed towards developers coming from Ethereum and utilizes the sandbox. There is a limited assumed knowledge of zk, but there are pieces throughout to encourage zk devs. If we are using this to run workshops, we will have to edit slightly depending on our audience.
+*> 💡 This branch is primarily aimed towards developers coming from Ethereum and utilizes the sandbox. There is a limited assumed knowledge of zk, but there are pieces throughout to encourage zk devs. We will be adding other branches for different knowledge levels.*
 
 In this tutorial, we will write, compile, deploy, and interact with an Aztec.nr smart contract. You do not need any experience with Aztec or Noir, but it will help to have some basic blockchain knowledge. You’ll learn how to:
 
@@ -10,11 +10,11 @@ In this tutorial, we will write, compile, deploy, and interact with an Aztec.nr 
 4. Deploy your contract using Aztec.js
 5. Interact with your contract using Aztec.js
 
-Before following this tutorial, please make sure you have [installed the sandbox](https://sandbox.aztec.network/).
+Before following this tutorial, please make sure you have [installed the sandbox.](https://sandbox.aztec.network) 
 
 # Contract
 
-This tutorial is divided into two parts - the contract and the node app. If you’d like to skip to the Aztec.js part, you can find the full smart contract [here](https://github.com/catmcgee/aztecnr-private-token-example/blob/main/contracts/private_token_contract/src/main.nr).
+This tutorial is divided into two parts - the contract and the node app. If you’d like to skip to the Aztec.js part, you can find the full smart contract here.
 
 ## Starting a project
 
@@ -32,16 +32,16 @@ npm
 npx @aztec/aztec-sandbox
 ```
 
-### Install dependencies
+### Requirements
 
-You will need to install nargo, the Noir build tool. If you are familiar with Rust, this is similar to cargo. 
+You will need to install nargo, the Noir build too. if you are familiar with Rust, this is similar to cargo. 
 
 ```bash
 curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
 noirup -v aztec
 ```
 
-This command ensures that you are on the `aztec` version of noirup, which is what we need to compile and deploy [aztec.nr](http://aztec.nr) smart contracts.
+This command ensures that you are on the `aztec` version of noirup, which is what we need to compile and deploy aztec.nr smart contracts.
 
 ### Create a project
 
@@ -51,7 +51,7 @@ Create a new directory called `aztec-private-token`
 mkdir aztec-private-token
 ```
 
-then create a `contracts` folder inside where our [aztec.nr](http://aztec.nr) contract will live:
+then create a `contracts` folder inside where our aztec.nr contract will live:
 
 ```bash
 cd aztec-private-token
@@ -76,7 +76,7 @@ aztec-private-token
 | |  |Nargo.toml
 ```
 
-The file `[main.nr](http://main.nr)` will soon turn into our smart contract!
+The file `main.nr` will soon turn into our smart contract!
 
 Go to the generated file `Nargo.toml` and replace it with this:
 
@@ -103,7 +103,7 @@ In this contract, the identity of the sender and recipient, the amount being tra
 
 ### Step 1: Define the functions needed
 
-Go to `[main.nr](http://main.nr)` and replace the code with this contract and functions:
+Go to `main.nr` and replace the code with this contract and functions:
 
 ```rust
 contract PrivateToken {
@@ -287,14 +287,283 @@ unconstrained fn getBalance(owner: Field) -> Field {
 
 In this function, we initialize our storage with no context as it is not required. This allows us to fetch data from storage without a transaction. We retrieve a reference to the `owner`'s `ValueNote` Set from the `balances` Map. The `get_balance` function then operates on the owner's `ValueNote` Set. This processes the set of `ValueNote`s to yield a private and encrypted balance that only the private key owner can decrypt.
 
-# TODO: Interacting with a contract using Aztec.js
+# Deploying a contract using Aztec.js
 
-you can compile, deploy and call functions from sandbox, and also aztec.js
+This tutorial assumes you have followed along to create a private token smart contract. If you skipped that part, you can get the smart contract here.
 
 ### Setting up a project
 
-### Compile and deploy your token contract
+You will need to run the sandbox if it is not running already. You can use either Docker or npm. 
 
-### Get balance
+Docker
 
-### Transfer a token
+```rust
+/bin/bash -c "$(curl -fsSL 'https://sandbox.aztec.network')"
+```
+
+npm
+
+```rust
+npx @aztec/aztec-sandbox
+```
+
+### Requirements
+
+- [Aztec Sandbox](https://sandbox.aztec.network/)
+- Node ≥ 18
+- Aztec CLI
+
+```rust
+yarn global add @aztec/cli
+```
+
+or
+
+```rust
+npm install -g @aztec/cli
+```
+
+### Set up a project
+
+Go the root directory we created in [this section](https://www.notion.so/Tutorial-Write-and-interact-with-your-first-Aztec-nr-contract-9b50d2af9d3c4111a810926a6701894a?pvs=21) and create a new `yarn` project. `npm` works too.
+
+```bash
+yarn init
+```
+
+Leave the following questions as default. 
+
+Add `typescript`  and Aztec libraries to your project:
+
+```bash
+yarn add typescript @types/node --dev @aztec/aztec.js @aztec/noir-contracts
+```
+
+and create a `src` directory:
+
+```bash
+mkdir src
+```
+
+Now in your `package.json` add a `scripts` section and set `"type":"module"`:
+
+```json
+"type": "module",
+"scripts": {
+    "build": "yarn clean && tsc -b",
+    "build:dev": "tsc -b --watch",
+    "clean": "rm -rf ./dest tsconfig.tsbuildinfo",
+    "start": "yarn build && export DEBUG='private-token' && node ./dest/src/index.js"
+  },
+```
+
+Create a `tsconfig.json` in the root and use your favourite config settings. Here’s an example:
+
+```json
+{
+    "compilerOptions": {
+      "rootDir": "./",
+      "outDir": "dest",
+      "target": "es2020",
+      "lib": ["dom", "esnext", "es2017.object"],
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "strict": true,
+      "declaration": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "downlevelIteration": true,
+      "inlineSourceMap": true,
+      "declarationMap": true,
+      "importHelpers": true,
+      "resolveJsonModule": true,
+      "composite": true,
+      "skipLibCheck": true
+    },
+    "include": ["src/**/*", "contracts/**/*.json"],
+    "exclude": ["node_modules", "**/*.spec.ts", "contracts/**/*.ts"],
+    "references": []
+}
+```
+
+Now we’re set up!
+
+### Generate typescript classes
+
+The Aztec CLI has a compiler that allows you to autogenerate type-safe typescript classes for your contracts.
+
+Generate one for our private token smart contract like this (assuming you are in the project root directory)
+
+```bash
+aztec-cli compile --typescript ../../src ./contracts/private_token_contract
+```
+
+This will create `privateToken.ts` and `target` in your `src` dir.
+
+### Deploy
+
+Now we’re ready for some code. We’re going to create a deploy script.
+
+Create an `index.ts` file in `src` and paste this:
+
+```tsx
+import { Fr } from '@aztec/foundation/fields'; 
+import { createAztecRpcClient } from '@aztec/aztec.js';
+import { PrivateTokenContract } from './PrivateToken.js'; // the TS file we generated from our smart contract
+
+const SANDBOX_URL = process.env['SANDBOX_URL'] || 'http://localhost:8080';
+```
+
+We will use Fr to create a `salt` and `createAztecRpcClient` to communicate with the sandbox.
+
+Create a new async function and set up the RPC client.
+
+```tsx
+const deployContract = async () => {
+		const rpc = await createAztecRpcClient(SANDBOX_URL);
+    const accounts = await rpc.getAccounts();
+		console.log(`Accounts: ${await console.log(accounts);}
+};
+```
+
+This creates an RPC client for us to communicate with the sandbox and gets all existing accounts. 
+
+At the end of the file put this so this function is called when we run:
+
+```tsx
+deployContract();
+```
+
+Run `yarn start` and you should see something like this:
+
+```json
+[
+  CompleteAddress {
+    address: AztecAddress {
+      buffer: <Buffer 0c 8a 66 73 d7 67 6c c8 0a ae be 7f a7 50 4c f5 1d aa 90 ba 90 68 61 bf ad 70 a5 8a 98 bf 5a 7d>
+    },
+    publicKey: Point { x: [Fr], y: [Fr], kind: 'point' },
+    partialAddress: Fr {
+      value: 12842361594093371645447963466236087693839286598884465802477690293367168135161n
+    }
+  },
+  CompleteAddress {
+    address: AztecAddress {
+      buffer: <Buffer 22 6f 80 87 79 2b ef f8 d5 00 9e b9 4e 65 d2 a4 a5 05 b7 0b af 4a 9f 28 d3 3c 8d 62 0b 0b a9 72>
+    },
+    publicKey: Point { x: [Fr], y: [Fr], kind: 'point' },
+    partialAddress: Fr {
+      value: 10947199389209909230221260693433096752267924726152037777149078870207166136489n
+    }
+  },
+  CompleteAddress {
+    address: AztecAddress {
+      buffer: <Buffer 0e 1f 60 e8 56 6e 2c 6d 32 37 8b dc ad b7 c6 36 96 e8 53 28 1b e7 98 c1 07 26 6b 8c 3a 88 ea 9b>
+    },
+    publicKey: Point { x: [Fr], y: [Fr], kind: 'point' },
+    partialAddress: Fr {
+      value: 21716832730255068406413142798013580191572666867321964226631189064226445259586n
+    }
+  }
+]
+```
+
+Now under our logging statement let’s get the data we need to deploy:
+
+```tsx
+ const deployerWallet = accounts[0];
+ const salt = Fr.random();
+```
+
+We will use the first account in our array to deploy the contract and a salt to help us compute where the contract will be deployed (like CREATE2).
+
+Next we will create and send a deployment transaction object:
+
+```tsx
+const tx = PrivateTokenContract.deploy(
+										rpc, 
+										100n, 
+										deployerWallet.address).send(
+													{ contractAddressSalt: salt });
+console.log(`Tx sent with hash ${await tx.getTxHash()}`);
+```
+
+`deploy` takes 3 arguments:
+
+- rpc: instance of an RPC client (RPC object)
+- noteValue: initial token supply (BigInt)
+- deployerAddress: Aztec account address that will deploy the contract (string)
+
+We are also passing `contractAddressSalt` in options, with our salt we generated from `Fr`.
+
+Run `yarn start` and you’ll see something like this:
+
+```json
+Tx sent with hash 1a8fc8a8807fd9504869426f9470ca8fc7bc89aa9db53d201ea9765866be46a1
+```
+
+The deploy transaction has been sent - now let’s make sure it is successfully mined.
+
+`tx` has a function `getReceipt` which contains status, block information, tx hash, and contract address. Put this under your transaction: 
+
+```tsx
+const receipt = await tx.getReceipt();
+console.log(`Status: ${receipt.status}`);
+console.log(`Contract address: ${receipt.contractAddress}`);
+```
+
+If we run this, we will see:
+
+```json
+Status: pending
+Contract address: undefined
+```
+
+so we have to wait until after the transaction is mined. 
+
+Add this line on top of your receipt code:
+
+```tsx
+await tx.isMined({ interval: 0.1 });
+```
+
+The `interval` lets us check if the transaction is mined every 0.1 seconds. 
+
+Your entire file should look like this:
+
+```tsx
+import { Fr } from '@aztec/foundation/fields';
+import { createAztecRpcClient } from '@aztec/aztec.js';
+import { PrivateTokenContract } from './PrivateToken.js';
+
+const SANDBOX_URL = process.env['SANDBOX_URL'] || 'http://localhost:8080'; 
+
+const deployContract = async () => {
+    const rpc = await createAztecRpcClient(SANDBOX_URL);
+    const accounts = await rpc.getAccounts();
+    await console.log(accounts);
+
+    const deployerWallet = accounts[0];
+    const salt = Fr.random();
+
+    const tx = PrivateTokenContract.deploy(rpc, 100n, deployerWallet.address).send({ contractAddressSalt: salt });
+    console.log(`Tx sent with hash ${await tx.getTxHash()}`);
+
+    await tx.isMined({ interval: 0.1 });
+    const receiptAfterMined = await tx.getReceipt();
+    console.log(`Status: ${receiptAfterMined.status}`);
+    console.log(`Contract address: ${receiptAfterMined.contractAddress}`);
+};
+deployContract()
+```
+
+Run `yarn start` and you’ll see something like this:
+
+```json
+Status: mined
+Contract address: 0x05eaa897fb321983b60715f37809f36aec7f6061eaf671574b6c0303bbdd9687
+```
+
+Congratulations! You’ve just written and deployed an [Aztec.nr](http://Aztec.nr) smart contract on the sandbox! 🚀
+
+To learn more about Aztec.js, including how to interact with your new deployed contract, check out the docs [here](https://aztec-docs-dev.netlify.app/dev_docs/getting_started/sandbo).
