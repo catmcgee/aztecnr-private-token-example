@@ -347,7 +347,7 @@ mkdir src
 
 Now in your `package.json` add a `scripts` section and set `"type":"module"`:
 
-```json
+```
 "type": "module",
 "scripts": {
     "build": "yarn clean && tsc -b",
@@ -436,7 +436,7 @@ deployContract();
 
 Run `yarn start` and you should see something like this:
 
-```json
+```
 [
   CompleteAddress {
     address: AztecAddress {
@@ -498,7 +498,7 @@ We are also passing `contractAddressSalt` in options, with our salt we generated
 
 Run `yarn start` and you’ll see something like this:
 
-```json
+```
 Tx sent with hash 1a8fc8a8807fd9504869426f9470ca8fc7bc89aa9db53d201ea9765866be46a1
 ```
 
@@ -514,7 +514,7 @@ console.log(`Contract address: ${receipt.contractAddress}`);
 
 If we run this, we will see:
 
-```json
+```
 Status: pending
 Contract address: undefined
 ```
@@ -559,11 +559,11 @@ deployContract()
 
 Run `yarn start` and you’ll see something like this:
 
-```json
+```
 Status: mined
 Contract address: 0x05eaa897fb321983b60715f37809f36aec7f6061eaf671574b6c0303bbdd9687
 ```
 
-Congratulations! You’ve just written and deployed an [Aztec.nr](http://Aztec.nr) smart contract on the sandbox! 🚀
+Congratulations! You’ve just written and deployed an Aztec.nr smart contract on the sandbox! 🚀
 
-To learn more about Aztec.js, including how to interact with your new deployed contract, check out the docs [here](https://aztec-docs-dev.netlify.app/dev_docs/getting_started/sandbo).
+To learn more about Aztec.js, including how to interact with your new deployed contract, check out the docs [here](https://aztec-docs-dev.netlify.app/dev_docs/getting_started/sandbox).
